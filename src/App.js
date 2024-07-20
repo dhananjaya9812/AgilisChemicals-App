@@ -1,25 +1,35 @@
-import logo from './logo.svg';
-import './App.css';
+import React, { useState, useEffect } from 'react';
+import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import HomePage from './pages/HomePage';
+import CartPage from './pages/CartPage';
+import LoginPage from './pages/LoginPage';
 
-function App() {
+const App = () => {
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+
+  useEffect(() => {
+    const authStatus = localStorage.getItem('isAuthenticated');
+    setIsAuthenticated(authStatus === 'true');
+  }, []);
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <Router>
+      <Routes>
+        <Route
+          path="/login"
+          element={<LoginPage setAuth={setIsAuthenticated} />}
+        />
+        <Route
+          path="/"
+          element={isAuthenticated ? <HomePage /> : <Navigate to="/login" />}
+        />
+        <Route
+          path="/cart"
+          element={isAuthenticated ? <CartPage /> : <Navigate to="/login" />}
+        />
+      </Routes>
+    </Router>
   );
-}
+};
 
 export default App;
